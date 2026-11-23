@@ -10,6 +10,14 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Fix Missing iOS Assets
+        run: |
+          mkdir -p RSDKv4-Decompilation/dependencies/ios
+          for img in Default.png Default@2x.png Default-568h@2x.png Icon.png Icon@2x.png Icon-72.png Icon-72@2x.png Icon-Small.png Icon-Small@2x.png; do
+            rm -f "RSDKv4-Decompilation/dependencies/ios/$img"
+            sips -s format png /System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/GenericDocumentIcon.icns --out "RSDKv4-Decompilation/dependencies/ios/$img"
+          done
+
       - name: Build RSDKv4 iOS
         run: |
           xcodebuild -project "RSDKv4 ios.xcodeproj" -alltargets -configuration Release -sdk iphoneos CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" ENABLE_BITCODE=NO COMPRESS_PNG_FILES=NO STRIP_PNG_TEXT=NO build SYMROOT="$PWD/build"
